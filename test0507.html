@@ -1,44 +1,348 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        div {
-            border-radius: 20%;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotating Box Catch Game</title>
 
-    </style>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #1e293b, #020617);
+      font-family: Arial, sans-serif;
+      color: white;
+      cursor: none;
+      user-select: none;
+    }
+
+    .score {
+      position: fixed;
+      top: 30px;
+      left: 40px;
+      font-size: 42px;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    .time {
+      position: fixed;
+      top: 30px;
+      right: 40px;
+      font-size: 42px;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    .guide {
+      position: fixed;
+      bottom: 35px;
+      width: 100%;
+      text-align: center;
+      font-size: 15px;
+      letter-spacing: 3px;
+      opacity: 0.75;
+    }
+
+    .player {
+      position: absolute;
+      width: 55px;
+      height: 55px;
+      background: white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 25px white, 0 0 55px #38bdf8;
+      z-index: 20;
+    }
+
+    .target-box {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 22%;
+      background: linear-gradient(135deg, #38bdf8, #a78bfa);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.8);
+    }
+
+    .bad-box {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 20%;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.8);
+    }
+
+    .start-screen,
+    .end-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      text-align: center;
+    }
+
+    .panel {
+      width: 430px;
+      padding: 45px 35px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 60px rgba(56,189,248,0.25);
+      backdrop-filter: blur(14px);
+    }
+
+    .panel h1 {
+      font-size: 34px;
+      margin-bottom: 18px;
+    }
+
+    .panel p {
+      font-size: 15px;
+      line-height: 1.7;
+      opacity: 0.8;
+      margin-bottom: 26px;
+    }
+
+    button {
+      border: none;
+      padding: 15px 35px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .pop {
+      position: absolute;
+      color: #facc15;
+      font-size: 24px;
+      font-weight: bold;
+      pointer-events: none;
+      animation: popUp 0.6s forwards;
+      z-index: 30;
+    }
+
+    @keyframes popUp {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-45px) scale(1.4);
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <script>
-        document.addEventListener('mousemove', function(event) {
-            const box =document.createElement('div');
-            box.style.position = 'absolute';
-            box.style.width = '200px';
-            box.style.height = '200px';
-            box.style.backgroundColor = `rgb(${Math.ceil(Math.random()*200)}, 
-            100, 100)`;
-            box.style.top = `${event.clientY-100}px`;
-            box.style.left = `${event.clientX-100}px`;
+  <div class="score">SCORE 0</div>
+  <div class="time">TIME 30</div>
+  <div class="guide">마우스로 움직여 파란 회전 박스를 먹고, 빨간 박스는 피하세요</div>
 
-            document.body.appendChild(box);
+  <div class="player"></div>
 
-        })
+  <div class="start-screen">
+    <div class="panel">
+      <h1>ROTATE BOX GAME</h1>
+      <p>
+        마우스를 움직여 하얀 공을 조종하세요.<br>
+        파란 회전 박스에 닿으면 +10점,<br>
+        빨간 회전 박스에 닿으면 -15점입니다.
+      </p>
+      <button class="start-btn">게임 시작</button>
+    </div>
+  </div>
 
-        let rotate = 0;
-        function animate() {
-            requestAnimationFrame(animate);
-            let boxes = document.querySelectorAll('div');
-            rotate += 0.1;
-            boxes.forEach(function(box) {
-                box.style.transform = `rotate(${rotate}deg)`;
-            })
+  <div class="end-screen hidden">
+    <div class="panel">
+      <h1>GAME OVER</h1>
+      <p class="final-score">최종 점수: 0점</p>
+      <button class="restart-btn">다시 시작</button>
+    </div>
+  </div>
+
+  <script>
+    const player = document.querySelector(".player");
+    const scoreText = document.querySelector(".score");
+    const timeText = document.querySelector(".time");
+    const startScreen = document.querySelector(".start-screen");
+    const endScreen = document.querySelector(".end-screen");
+    const startBtn = document.querySelector(".start-btn");
+    const restartBtn = document.querySelector(".restart-btn");
+    const finalScore = document.querySelector(".final-score");
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let playerX = mouseX;
+    let playerY = mouseY;
+
+    let score = 0;
+    let time = 30;
+    let playing = false;
+    let boxes = [];
+    let timer;
+    let spawnTimer;
+    let rotate = 0;
+
+    document.addEventListener("mousemove", function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function startGame() {
+      score = 0;
+      time = 30;
+      playing = true;
+      boxes.forEach(box => box.el.remove());
+      boxes = [];
+
+      scoreText.textContent = "SCORE " + score;
+      timeText.textContent = "TIME " + time;
+
+      startScreen.classList.add("hidden");
+      endScreen.classList.add("hidden");
+
+      clearInterval(timer);
+      clearInterval(spawnTimer);
+
+      timer = setInterval(function() {
+        time--;
+        timeText.textContent = "TIME " + time;
+
+        if (time <= 0) {
+          endGame();
         }
-        animate();
-    </script>
-    
+      }, 1000);
+
+      spawnTimer = setInterval(function() {
+        createBox();
+      }, 700);
+    }
+
+    function endGame() {
+      playing = false;
+      clearInterval(timer);
+      clearInterval(spawnTimer);
+
+      finalScore.textContent = "최종 점수: " + score + "점";
+      endScreen.classList.remove("hidden");
+    }
+
+    function createBox() {
+      const box = document.createElement("div");
+      const isBad = Math.random() < 0.35;
+
+      box.className = isBad ? "bad-box" : "target-box";
+
+      const size = isBad ? 80 : 90;
+      const x = Math.random() * (window.innerWidth - size);
+      const y = Math.random() * (window.innerHeight - size);
+
+      box.style.left = x + "px";
+      box.style.top = y + "px";
+
+      document.body.appendChild(box);
+
+      boxes.push({
+        el: box,
+        x: x,
+        y: y,
+        size: size,
+        bad: isBad,
+        angle: Math.random() * 360,
+        life: 240
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      playerX += (mouseX - playerX) * 0.18;
+      playerY += (mouseY - playerY) * 0.18;
+
+      player.style.left = playerX + "px";
+      player.style.top = playerY + "px";
+
+      if (!playing) return;
+
+      rotate += 2;
+
+      boxes.forEach(function(box, index) {
+        box.angle += box.bad ? -4 : 3;
+        box.life--;
+
+        box.el.style.transform = `rotate(${box.angle}deg) scale(${box.life / 240})`;
+        box.el.style.opacity = box.life / 240;
+
+        const boxCenterX = box.x + box.size / 2;
+        const boxCenterY = box.y + box.size / 2;
+
+        const dx = playerX - boxCenterX;
+        const dy = playerY - boxCenterY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < box.size / 2 + 28) {
+          if (box.bad) {
+            score -= 15;
+            showPop("-15", boxCenterX, boxCenterY);
+          } else {
+            score += 10;
+            showPop("+10", boxCenterX, boxCenterY);
+          }
+
+          scoreText.textContent = "SCORE " + score;
+          box.el.remove();
+          boxes.splice(index, 1);
+        }
+
+        if (box.life <= 0) {
+          box.el.remove();
+          boxes.splice(index, 1);
+        }
+      });
+    }
+
+    function showPop(text, x, y) {
+      const pop = document.createElement("div");
+      pop.className = "pop";
+      pop.textContent = text;
+      pop.style.left = x + "px";
+      pop.style.top = y + "px";
+
+      document.body.appendChild(pop);
+
+      setTimeout(function() {
+        pop.remove();
+      }, 600);
+    }
+
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", startGame);
+
+    animate();
+  </script>
 </body>
 </html>
