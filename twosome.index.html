@@ -1,1 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A TWOSOME PLACE CUP BINGSU</title>
 
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      background: #f4efe7;
+      color: #111;
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 78% 28%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.2) 26%, transparent 45%),
+        radial-gradient(circle at 92% 66%, rgba(129,151,91,0.25) 0%, transparent 30%),
+        linear-gradient(120deg, #f7f0e6 0%, #ede1d2 45%, #fbf8ef 100%);
+    }
+
+    .wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.7), transparent 52%),
+        repeating-linear-gradient(120deg, rgba(255,255,255,0.12) 0 1px, transparent 1px 14px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .leaf {
+      position: absolute;
+      right: -80px;
+      top: 150px;
+      width: 380px;
+      height: 380px;
+      border-radius: 60% 40% 60% 40%;
+      background: rgba(122, 151, 83, 0.18);
+      filter: blur(2px);
+      transform: rotate(-18deg);
+      opacity: 0;
+      animation: softIn 1.2s ease forwards;
+      z-index: 0;
+    }
+
+    .leaf2 {
+      position: absolute;
+      right: 220px;
+      bottom: 90px;
+      width: 240px;
+      height: 240px;
+      border-radius: 45% 55% 40% 60%;
+      background: rgba(91, 124, 70, 0.13);
+      filter: blur(2px);
+      transform: rotate(28deg);
+      opacity: 0;
+      animation: softIn 1.2s ease forwards;
+      animation-delay: 0.3s;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 50;
+      width: 100%;
+      height: 86px;
+      background: rgba(15, 15, 15, 0.96);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      width: 220px;
+      height: 86px;
+      background: #b5122b;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 32px;
+      line-height: 1;
+    }
+
+    .logo strong {
+      font-size: 22px;
+      letter-spacing: 2px;
+      font-weight: 900;
+    }
+
+    .logo span {
+      margin-top: 8px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      opacity: 0.85;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      padding-left: 52px;
+      flex: 1;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      opacity: 0.95;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #e5b8bd;
+    }
+
+    .right-menu {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: white;
+      padding-right: 42px;
+      font-size: 14px;
+    }
+
+    .hamburger {
+      width: 28px;
+      height: 20px;
+      position: relative;
+    }
+
+    .hamburger span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: white;
+      border-radius: 10px;
+    }
+
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { bottom: 0; }
+
+    .hero {
+      position: relative;
+      z-index: 10;
+      min-height: calc(100vh - 86px);
+      display: grid;
+      grid-template-columns: 44% 56%;
+      padding: 80px 7vw 120px;
+    }
+
+    .text-area {
+      padding-top: 70px;
+      position: relative;
+      z-index: 4;
+    }
+
+    .season {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #a31328;
+      font-size: 14px;
+      letter-spacing: 4px;
+      font-weight: 800;
+      margin-bottom: 34px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .season::after {
+      content: "";
+      width: 76px;
+      height: 1px;
+      background: #a31328;
+      opacity: 0.6;
+    }
+
+    h1 {
+      font-family: "Times New Roman", "Noto Serif KR", serif;
+      font-size: clamp(58px, 6vw, 98px);
+      line-height: 1.04;
+      letter-spacing: -5px;
+      font-weight: 400;
+      color: #151515;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    h1 span {
+      display: block;
+      color: #a31328;
+      font-size: 1.18em;
+      margin-top: 2px;
+    }
+
+    .desc {
+      width: 92%;
+      max-width: 560px;
+      font-size: 17px;
+      line-height: 1.85;
+      color: #4a433d;
+      margin-bottom: 34px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 38px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+      animation-delay: 0.58s;
+    }
+
+    .btn {
+      min-width: 190px;
+      height: 58px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 4px;
+      transition: 0.3s;
+    }
+
+    .btn.red {
+      background: #b5122b;
+      color: white;
+      box-shadow: 0 18px 34px rgba(181,18,43,0.25);
+    }
+
+    .btn.line {
+      border: 1px solid rgba(20,20,20,0.28);
+      color: #252525;
+      background: rgba(255,255,255,0.35);
+    }
+
+    .btn:hover {
+      transform: translateY(-4px);
+    }
+
+    .chips {
+      width: 560px;
+      max-width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid rgba(50,40,36,0.18);
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+      animation-delay: 0.75s;
+    }
+
+    .chip {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 0 20px;
+      border-right: 1px solid rgba(50,40,36,0.12);
+    }
+
+    .chip:last-child {
+      border-right: none;
+    }
+
+    .chip-icon {
+      color: #a31328;
+      font-size: 25px;
+    }
+
+    .chip strong {
+      display: block;
+      font-size: 13px;
+      color: #403832;
+    }
+
+    .chip span {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #8a7c72;
+    }
+
+    .visual-area {
+      position: relative;
+      min-height: 660px;
+      z-index: 4;
+    }
+
+    .badge {
+      position: absolute;
+      right: 28%;
+      top: 60px;
+      width: 150px;
+      height: 150px;
+      border: 1px solid rgba(255,255,255,0.95);
+      border-radius: 50%;
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 20;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.22);
+      opacity: 0;
+      animation: pop 0.8s ease forwards;
+      animation-delay: 1.9s;
+      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.06);
+    }
+
+    .badge b {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .badge strong {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .badge span {
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .photo-product {
+      position: absolute;
+      left: 4%;
+      top: 35px;
+      width: 560px;
+      height: 630px;
+      opacity: 0;
+      animation: productUp 1.1s cubic-bezier(.2,.8,.2,1) forwards;
+      animation-delay: 0.9s;
+    }
+
+    .product-glow {
+      position: absolute;
+      left: 10px;
+      top: 20px;
+      width: 530px;
+      height: 530px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(181,18,43,0.08) 55%, transparent 72%);
+      filter: blur(3px);
+      z-index: 1;
+    }
+
+    .main-photo {
+      position: absolute;
+      left: 55px;
+      top: 18px;
+      width: 455px;
+      height: 570px;
+      border-radius: 36px;
+      overflow: hidden;
+      z-index: 3;
+      box-shadow:
+        0 40px 82px rgba(43,35,28,0.3),
+        inset 0 0 0 1px rgba(255,255,255,0.45);
+      background: #ddd;
+    }
+
+    .main-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.16)),
+        linear-gradient(90deg, rgba(255,255,255,0.25), transparent 46%);
+      pointer-events: none;
+    }
+
+    .main-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.05);
+    }
+
+    .stone {
+      position: absolute;
+      left: 40px;
+      bottom: 18px;
+      width: 480px;
+      height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 35%, #55514d, #232323 78%);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.32);
+      z-index: 2;
+    }
+
+    .photo-label {
+      position: absolute;
+      left: 155px;
+      bottom: 88px;
+      width: 250px;
+      height: 86px;
+      background: rgba(15,15,15,0.82);
+      color: white;
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+    }
+
+    .photo-label::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: rgba(181,18,43,0.82);
+      z-index: -1;
+    }
+
+    .photo-label strong {
+      font-size: 15px;
+      letter-spacing: 2px;
+      font-weight: 900;
+    }
+
+    .photo-label span {
+      margin-top: 7px;
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .photo-card {
+      position: absolute;
+      width: 265px;
+      height: 210px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 26px 48px rgba(55,48,38,0.16);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+      z-index: 25;
+      opacity: 0;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(255,255,255,0.94) 100%);
+      pointer-events: none;
+    }
+
+    .photo-card1 {
+      right: 0;
+      top: 128px;
+      transform: rotate(6deg);
+      animation: photoCardRight 0.9s ease forwards;
+      animation-delay: 1.3s;
+    }
+
+    .photo-card2 {
+      right: 95px;
+      bottom: 94px;
+      transform: rotate(-5deg);
+      animation: photoCardLeft 0.9s ease forwards;
+      animation-delay: 1.65s;
+    }
+
+    .card-text {
+      position: absolute;
+      left: 20px;
+      bottom: 18px;
+      z-index: 3;
+    }
+
+    .card-text strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      color: #211c19;
+      margin-bottom: 5px;
+    }
+
+    .card-text span {
+      display: block;
+      font-size: 11px;
+      color: #6d625b;
+      font-weight: 600;
+    }
+
+    .plus {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 4;
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(0,0,0,0.22);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #4b4038;
+      font-size: 18px;
+      background: rgba(255,255,255,0.45);
+    }
+
+    .bottom {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 92px;
+      display: grid;
+      grid-template-columns: 28% 32% 25% 15%;
+      z-index: 60;
+      color: white;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+      animation-delay: 2.1s;
+    }
+
+    .bottom-box {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 64px;
+      background: rgba(30,30,30,0.9);
+      border-right: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .bottom-box:first-child {
+      background: #b5122b;
+    }
+
+    .bottom-icon {
+      font-size: 34px;
+      opacity: 0.85;
+    }
+
+    .bottom-box strong {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+
+    .bottom-box span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .bottom-more {
+      background: rgba(30,30,30,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bottom-more a {
+      width: 160px;
+      height: 48px;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 7px;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .bottom-more a:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-3px);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(34px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes productUp {
+      from {
+        opacity: 0;
+        transform: translateY(85px) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes photoCardRight {
+      from {
+        opacity: 0;
+        transform: translateX(90px) rotate(12deg) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) rotate(6deg) scale(1);
+      }
+    }
+
+    @keyframes photoCardLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-80px) rotate(-10deg) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) rotate(-5deg) scale(1);
+      }
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(0.45) rotate(-15deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes softIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8) rotate(-18deg);
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      header {
+        height: auto;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        width: 100%;
+        height: 78px;
+      }
+
+      nav {
+        width: 100%;
+        padding: 22px 28px;
+        gap: 24px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .right-menu {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 50px 6vw 150px;
+      }
+
+      .text-area {
+        padding-top: 20px;
+      }
+
+      h1 {
+        font-size: 62px;
+      }
+
+      .visual-area {
+        min-height: 670px;
+      }
+
+      .photo-product {
+        left: 50%;
+        margin-left: -280px;
+      }
+
+      .photo-card1 {
+        right: 4%;
+      }
+
+      .photo-card2 {
+        right: 14%;
+      }
+
+      .bottom {
+        position: relative;
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .bottom-box,
+      .bottom-more {
+        min-height: 90px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        padding: 36px 24px 60px;
+      }
+
+      nav {
+        gap: 16px;
+      }
+
+      nav a {
+        font-size: 13px;
+      }
+
+      .season {
+        font-size: 12px;
+        letter-spacing: 2px;
+      }
+
+      h1 {
+        font-size: 46px;
+        letter-spacing: -3px;
+      }
+
+      .desc {
+        font-size: 15px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .chips {
+        grid-template-columns: 1fr;
+      }
+
+      .chip {
+        border-right: none;
+        border-bottom: 1px solid rgba(50,40,36,0.12);
+      }
+
+      .visual-area {
+        min-height: 600px;
+        transform: scale(0.78);
+        transform-origin: top center;
+        margin-top: 20px;
+      }
+
+      .photo-product {
+        left: 50%;
+        margin-left: -280px;
+      }
+
+      .main-photo {
+        width: 420px;
+        height: 520px;
+        left: 70px;
+      }
+
+      .photo-label {
+        left: 150px;
+        bottom: 105px;
+      }
+
+      .photo-card {
+        width: 235px;
+        height: 190px;
+      }
+
+      .photo-card1 {
+        right: -10px;
+      }
+
+      .photo-card2 {
+        right: 60px;
+      }
+
+      .bottom-box {
+        padding: 0 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="leaf"></div>
+    <div class="leaf2"></div>
+
+    <header>
+      <div class="logo">
+        <strong>A TWOSOME<br>PLACE</strong>
+        <span>coffee & dessert</span>
+      </div>
+
+      <nav>
+        <a href="#">메뉴</a>
+        <a href="#">매장</a>
+        <a href="#">이벤트</a>
+        <a href="#">멤버십</a>
+        <a href="#">투썸 오더</a>
+      </nav>
+
+      <div class="right-menu">
+        <span>로그인</span>
+        <span>회원가입</span>
+        <span>⌖ 매장 찾기</span>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="text-area">
+        <div class="season">2024 SUMMER SEASON</div>
+
+        <h1>
+          여름을 담은 한 컵,
+          <span>컵빙수</span>
+        </h1>
+
+        <p class="desc">
+          부드러운 우유얼음과 신선한 과일 토핑, 달콤한 팥과 찹쌀떡까지.
+          투썸만의 프리미엄 컵빙수로 일상의 여름을 더 특별하게 즐겨보세요.
+        </p>
+
+        <div class="buttons">
+          <a href="#" class="btn red">컵빙수 보러가기 <span>→</span></a>
+          <a href="#" class="btn line">투썸 오더로 주문하기 <span>→</span></a>
+        </div>
+
+        <div class="chips">
+          <div class="chip">
+            <div class="chip-icon">❄</div>
+            <div>
+              <strong>시즌 한정</strong>
+              <span>SEASONAL</span>
+            </div>
+          </div>
+
+          <div class="chip">
+            <div class="chip-icon">♕</div>
+            <div>
+              <strong>프리미엄 원재료</strong>
+              <span>PREMIUM</span>
+            </div>
+          </div>
+
+          <div class="chip">
+            <div class="chip-icon">☕</div>
+            <div>
+              <strong>디저트 전문</strong>
+              <span>DESSERT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="visual-area">
+        <div class="badge">
+          <b>❄</b>
+          <strong>시즌 한정</strong>
+          <span>CUP BINGSU</span>
+        </div>
+
+        <div class="photo-product">
+          <div class="product-glow"></div>
+          <div class="stone"></div>
+
+          <div class="main-photo">
+            <img
+              src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=85"
+              alt="컵빙수 메인 이미지"
+            >
+          </div>
+
+          <div class="photo-label">
+            <strong>A TWOSOME PLACE</strong>
+            <span>coffee & dessert</span>
+          </div>
+        </div>
+
+        <div class="photo-card photo-card1">
+          <img
+            src="https://images.unsplash.com/photo-1541599188778-cdc73298e8fd?auto=format&fit=crop&w=700&q=85"
+            alt="애플망고 컵빙수"
+          >
+          <div class="card-text">
+            <strong>애플망고 컵빙수</strong>
+            <span>달콤한 망고와 부드러운 우유얼음</span>
+          </div>
+          <div class="plus">+</div>
+        </div>
+
+        <div class="photo-card photo-card2">
+          <img
+            src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=700&q=85"
+            alt="샤인머스캣 컵빙수"
+          >
+          <div class="card-text">
+            <strong>샤인머스캣 컵빙수</strong>
+            <span>상큼한 과일 토핑의 여름 디저트</span>
+          </div>
+          <div class="plus">+</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom">
+      <div class="bottom-box">
+        <div class="bottom-icon">▣</div>
+        <div>
+          <strong>6.1(토) - 8.31(토)</strong>
+          <span>여름 한정 출시</span>
+        </div>
+      </div>
+
+      <div class="bottom-box">
+        <div class="bottom-icon">♨</div>
+        <div>
+          <strong>프리미엄 원유로 만든 우유얼음</strong>
+          <span>더 부드럽고 더 깔끔하게</span>
+        </div>
+      </div>
+
+      <div class="bottom-box">
+        <div class="bottom-icon">▤</div>
+        <div>
+          <strong>투썸 하트 적립 & 쿠폰 혜택</strong>
+          <span>컵빙수 구매 시 혜택 제공</span>
+        </div>
+      </div>
+
+      <div class="bottom-more">
+        <a href="#">자세히 보기 <span>→</span></a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
